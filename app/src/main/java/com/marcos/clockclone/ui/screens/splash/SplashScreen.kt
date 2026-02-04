@@ -2,6 +2,7 @@ package com.marcos.clockclone.ui.screens.splash
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,24 +39,49 @@ fun SplashScreen(viewModel: SplashViewModel, onNavigateToMain: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF121212)), // Un fondo oscuro elegante
+            .background(Color(0xFF121212)), // Fondo oscuro (AMOLED style)
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            // Aquí pondremos un texto temporal hasta que tengamos un logo
-            Text(
-                text = "RELOJ",
-                color = Color.White,
-                fontSize = 40.sp,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 8.sp
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            // Mostramos el icono que acabas de importar
+            Icon(
+                painter = painterResource(id = R.drawable.ic_clock),
+                contentDescription = "Logo Reloj",
+                tint = Color.Cyan, // Color llamativo para el reloj
+                modifier = Modifier.size(120.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp))
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             Text(
-                text = "Cargando tu tiempo...",
-                color = Color.Gray,
-                fontSize = 14.sp
+                text = "ClockClone",
+                color = Color.White,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Light,
+                letterSpacing = 4.sp
+            )
+
+            Spacer(modifier = Modifier.height(48.dp)) // Espacio extra
+
+            // La rueda de carga
+            CircularProgressIndicator(
+                color = Color.Cyan,
+                strokeWidth = 3.dp,
+                modifier = Modifier.size(40.dp)
             )
         }
+
+        // Un detalle extra: un texto al pie de página
+        Text(
+            text = "By Marcos, Jorge y Héctor",
+            color = Color.DarkGray,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 32.dp),
+            fontSize = 12.sp
+        )
     }
 }
