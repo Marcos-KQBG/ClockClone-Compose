@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.marcos.clockclone.ui.screens.list.MainScreen
 import com.marcos.clockclone.ui.screens.splash.SplashScreen
 import com.marcos.clockclone.ui.screens.splash.SplashViewModel
 
@@ -31,7 +32,7 @@ fun NavGraph(splashViewModel: SplashViewModel) {
 
         // Definimos la ruta de la pantalla principal (de momento vacía)
         composable(route = Screens.Main.route) {
-            // Aquí la pantalla de Alarmas/Reloj más adelante
+            MainScreen() // Llamamos a nuestra nueva pantalla
         }
     }
 }
