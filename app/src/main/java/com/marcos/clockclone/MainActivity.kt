@@ -3,45 +3,24 @@ package com.marcos.clockclone
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.viewModels
+import com.marcos.clockclone.ui.navigation.NavGraph
+import com.marcos.clockclone.ui.screens.splash.SplashViewModel
 import com.marcos.clockclone.ui.theme.ClockCloneTheme
 
 class MainActivity : ComponentActivity() {
+
+    // Inicializamos el ViewModel del Splash aquí para pasárselo al NavGraph
+    private val splashViewModel: SplashViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
+            // Usamos el tema de nuestra app (colores, tipografía)
             ClockCloneTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                // Llamamos al NavGraph
+                NavGraph(splashViewModel = splashViewModel)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ClockCloneTheme {
-        Greeting("Android")
     }
 }
