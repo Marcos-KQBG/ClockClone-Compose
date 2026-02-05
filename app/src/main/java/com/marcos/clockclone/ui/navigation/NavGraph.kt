@@ -1,15 +1,20 @@
 package com.marcos.clockclone.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.marcos.clockclone.ui.screens.list.ListViewModel
 import com.marcos.clockclone.ui.screens.list.MainScreen
 import com.marcos.clockclone.ui.screens.splash.SplashScreen
 import com.marcos.clockclone.ui.screens.splash.SplashViewModel
 
 @Composable
-fun NavGraph(splashViewModel: SplashViewModel) {
+fun NavGraph(
+    splashViewModel: SplashViewModel,
+    listViewModel: ListViewModel
+) {
     val navController = rememberNavController()
 
     NavHost(
@@ -32,7 +37,7 @@ fun NavGraph(splashViewModel: SplashViewModel) {
 
         // Definimos la ruta de la pantalla principal (de momento vacía)
         composable(route = Screens.Main.route) {
-            MainScreen() // Llamamos a nuestra nueva pantalla
+            MainScreen(viewModel = listViewModel) // Llamamos a nuestra nueva pantalla
         }
     }
 }

@@ -3,49 +3,58 @@ package com.marcos.clockclone.ui.screens.list
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.marcos.clockclone.data.local.Alarm
+import com.marcos.clockclone.ui.mvi.ListIntent
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    // Generamos una lista de prueba con 30 alarmas para cumplir la rúbrica
-    val dummyAlarms = List(30) { i ->
-        Alarm(i, "0${7 + (i / 10)}:${(i % 10) * 6}0", "Alarma $i", i % 2 == 0)
+fun MainScreen(viewModel: ListViewModel) {
+    val state by viewModel.state.collectAsState()
+
+    // Cargamos las alarmas al entrar por primera vez
+    LaunchedEffect(Unit) {
+        viewModel.handleIntent(ListIntent.LoadAlarms)
     }
 
     Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Mis Alarmas", color = Color.White) },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFF121212)
-                )
-            )
+        topBar = { /* ... tu TopBar de antes ... */ },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { viewModel.handleIntent(ListIntent.AddAlarm) },
+                containerColor = Color.Cyan
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Añadir", tint = Color.Black)
+            }
         },
         containerColor = Color(0xFF121212)
     ) { padding ->
-        // Aquí está el Requisito 2: La lista eficiente
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            items(dummyAlarms) { alarm ->
-                AlarmItem(alarm)
+        LazyColumn(modifier = Modifier.padding(padding)) {
+            items(state.alarms) { alarm ->
+                AlarmItem(
+                    alarm = alarm,
+                    onToggle = { viewModel.handleIntent(ListIntent.ToggleAlarm(alarm.id)) }
+                )
             }
         }
     }
 }
 
 @Composable
-fun AlarmItem(alarm: Alarm) {
+fun AlarmItem(
+    alarm: Alarm,
+    onToggle: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,7 +68,8 @@ fun AlarmItem(alarm: Alarm) {
         }
         Switch(
             checked = alarm.isActive,
-            onCheckedChange = { /* Ya lo conectaremos al MVI */ }
+            // Ahora cuando el Switch cambie, ejecutamos la función que viene de arriba
+            onCheckedChange = { onToggle() }
         )
     }
     HorizontalDivider(color = Color.DarkGray, thickness = 0.5.dp)
