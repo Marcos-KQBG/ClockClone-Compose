@@ -15,11 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.marcos.clockclone.data.local.Alarm
 import com.marcos.clockclone.ui.mvi.ListIntent
+import com.marcos.clockclone.ui.navigation.Screens
 
 @Composable
-fun MainScreen(viewModel: ListViewModel) {
+fun MainScreen(viewModel: ListViewModel, navController: NavHostController) {
     val state by viewModel.state.collectAsState()
 
     // Cargamos las alarmas al entrar por primera vez
@@ -43,7 +45,11 @@ fun MainScreen(viewModel: ListViewModel) {
             items(state.alarms) { alarm ->
                 AlarmItem(
                     alarm = alarm,
-                    onToggle = { viewModel.handleIntent(ListIntent.ToggleAlarm(alarm.id)) }
+                    onToggle = { viewModel.handleIntent(ListIntent.ToggleAlarm(alarm.id)) },
+                    onClick = {
+                        // Usamos la función que creamos en Screens.kt para generar la ruta correcta
+                        navController.navigate(Screens.Detail.createRoute(alarm.id))
+                    }
                 )
             }
         }
@@ -53,7 +59,8 @@ fun MainScreen(viewModel: ListViewModel) {
 @Composable
 fun AlarmItem(
     alarm: Alarm,
-    onToggle: () -> Unit
+    onToggle: () -> Unit,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
