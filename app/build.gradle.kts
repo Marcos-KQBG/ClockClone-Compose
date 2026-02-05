@@ -48,7 +48,8 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    
+    implementation("com.google.maps.android:maps-compose:2.11.4")
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
     // Navigation Compose
     implementation(libs.androidx.navigation.compose)
 
