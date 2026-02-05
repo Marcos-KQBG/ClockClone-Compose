@@ -41,8 +41,7 @@ fun WorldClockScreen(navController: NavController, modifier: Modifier = Modifier
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(cities) { city ->
                 CityCard(city = city) {
-                    // Al pulsar, navegaremos al mapa (lo configuraremos en el siguiente paso)
-                    // navController.navigate("map_detail/${city.id}")
+                    navController.navigate("map_detail/${city.name}/${city.latitude.toFloat()}/${city.longitude.toFloat()}")
                 }
             }
         }
