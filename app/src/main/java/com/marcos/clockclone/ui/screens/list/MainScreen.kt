@@ -1,5 +1,6 @@
 package com.marcos.clockclone.ui.screens.list
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,45 +14,77 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.marcos.clockclone.data.local.Alarm
 import com.marcos.clockclone.ui.mvi.ListIntent
-import com.marcos.clockclone.ui.navigation.Screens
 
 @Composable
-fun MainScreen(viewModel: ListViewModel, navController: NavHostController) {
+fun MainScreen(
+    viewModel: ListViewModel,
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    // Accedemos al estado completo del ViewModel (MVI)
     val state by viewModel.state.collectAsState()
+    val alarms = state.alarms
 
-    // Cargamos las alarmas al entrar por primera vez
+    // Cargamos las alarmas iniciales si la lista está vacía
     LaunchedEffect(Unit) {
-        viewModel.handleIntent(ListIntent.LoadAlarms)
+        if (alarms.isEmpty()) {
+            viewModel.handleIntent(ListIntent.LoadAlarms)
+        }
     }
 
-    Scaffold(
-        topBar = { /* ... tu TopBar de antes ... */ },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { viewModel.handleIntent(ListIntent.AddAlarm) },
-                containerColor = Color.Cyan
+    // Usamos Box para superponer el FloatingActionButton sobre la lista
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Alarmas",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxSize()
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Añadir", tint = Color.Black)
+                items(alarms, key = { it.id }) { alarm ->
+                    AlarmItem(
+                        alarm = alarm,
+                        onClick = {
+                            // Navegación a la ruta de detalle con ID
+                            navController.navigate("detail/${alarm.id}")
+                        },
+                        onToggle = {
+                            viewModel.handleIntent(ListIntent.ToggleAlarm(alarm.id))
+                        }
+                    )
+                }
             }
-        },
-        containerColor = Color(0xFF121212)
-    ) { padding ->
-        LazyColumn(modifier = Modifier.padding(padding)) {
-            items(state.alarms) { alarm ->
-                AlarmItem(
-                    alarm = alarm,
-                    onToggle = { viewModel.handleIntent(ListIntent.ToggleAlarm(alarm.id)) },
-                    onClick = {
-                        // Usamos la función que creamos en Screens.kt para generar la ruta correcta
-                        navController.navigate(Screens.Detail.createRoute(alarm.id))
-                    }
-                )
-            }
+        }
+
+        // El Botón Flotante (FAB) posicionado abajo a la derecha
+        FloatingActionButton(
+            onClick = {
+                // Llamamos a la intención de añadir nueva alarma
+                viewModel.handleIntent(ListIntent.AddAlarm)
+            },
+            containerColor = Color.Cyan,
+            contentColor = Color.Black,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(24.dp)
+        ) {
+            Icon(Icons.Default.Add, contentDescription = "Agregar Alarma")
         }
     }
 }
@@ -59,25 +92,37 @@ fun MainScreen(viewModel: ListViewModel, navController: NavHostController) {
 @Composable
 fun AlarmItem(
     alarm: Alarm,
-    onToggle: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onToggle: () -> Unit
 ) {
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF1C1C1E))
     ) {
-        Column {
-            Text(text = alarm.time, fontSize = 32.sp, color = Color.White)
-            Text(text = alarm.label, fontSize = 14.sp, color = Color.Gray)
+        Row(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column {
+                Text(
+                    text = alarm.time,
+                    fontSize = 40.sp,
+                    color = if (alarm.isActive) Color.White else Color.Gray
+                )
+                Text(
+                    text = alarm.label,
+                    color = if (alarm.isActive) Color.White else Color.Gray
+                )
+            }
+            Switch(
+                checked = alarm.isActive,
+                onCheckedChange = { onToggle() }
+            )
         }
-        Switch(
-            checked = alarm.isActive,
-            // Ahora cuando el Switch cambie, ejecutamos la función que viene de arriba
-            onCheckedChange = { onToggle() }
-        )
     }
-    HorizontalDivider(color = Color.DarkGray, thickness = 0.5.dp)
 }

@@ -11,21 +11,22 @@ import com.marcos.clockclone.ui.theme.ClockCloneTheme
 
 class MainActivity : ComponentActivity() {
 
-    // Inicializamos el ViewModel del Splash aquí para pasárselo al NavGraph
+    // Inicializamos los ViewModels que vivirán durante toda la sesión de la App
     private val splashViewModel: SplashViewModel by viewModels()
     private val listViewModel: ListViewModel by viewModels()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            // Usamos el tema de nuestra app (colores, tipografía)
+            // Aplicamos el tema oscuro/personalizado de tu App
             ClockCloneTheme {
-                // Llamamos al NavGraph
+                // Invocamos el NavGraph, que es el que decide qué pantalla mostrar
+                // basándose en el estado de la navegación (Splash -> HomeContainer).
                 NavGraph(
                     splashViewModel = splashViewModel,
                     listViewModel = listViewModel
-                    )
+                )
             }
         }
     }
