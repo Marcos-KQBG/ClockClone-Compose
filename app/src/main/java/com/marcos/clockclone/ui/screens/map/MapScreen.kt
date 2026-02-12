@@ -13,6 +13,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,6 +33,8 @@ fun MapScreen(
     mapViewModel: MapViewModel = viewModel(),
     onBack: () -> Unit
 ) {
+    val cities by mapViewModel.cities.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -64,7 +68,7 @@ fun MapScreen(
                 },
                 update = { mapView ->
                     mapView.overlays.clear()
-                    mapViewModel.cities.forEach { city ->
+                    cities.forEach { city ->
                         val marker = Marker(mapView)
                         marker.position = GeoPoint(city.latitude, city.longitude)
                         marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)

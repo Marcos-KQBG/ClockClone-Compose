@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,10 +24,20 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.marcos.clockclone.data.local.WorldCity
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun WorldClockScreen(navController: NavController, mapViewModel: MapViewModel = viewModel(), modifier: Modifier = Modifier) {
-    val cities = mapViewModel.cities
+    val cities by mapViewModel.cities.collectAsState()
+    val currentTime by mapViewModel.currentTime.collectAsState()
+
+    // Creamos un formato de hora específico para la zona de Madrid
+    val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).apply {
+        timeZone = TimeZone.getTimeZone("Europe/Madrid")
+    }
 
     Column(
         modifier = modifier
@@ -34,7 +46,7 @@ fun WorldClockScreen(navController: NavController, mapViewModel: MapViewModel = 
             .padding(16.dp)
     ) {
         Text(
-            text = "16:50:53", // Hora actual grande arriba
+            text = timeFormat.format(Date(currentTime)),
             fontSize = 48.sp,
             color = Color.White,
             modifier = Modifier.align(Alignment.CenterHorizontally).padding(vertical = 32.dp)

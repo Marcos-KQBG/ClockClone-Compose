@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Place
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.marcos.clockclone.ui.screens.list.MainScreen
@@ -21,7 +22,7 @@ fun HomeContainer(
     mapViewModel: MapViewModel, // Añadido el MapViewModel
     navController: androidx.navigation.NavHostController
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) }
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) } // <--- CAMBIO AQUÍ
 
     Scaffold(
         bottomBar = {
