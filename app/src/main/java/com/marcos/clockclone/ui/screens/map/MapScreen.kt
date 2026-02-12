@@ -1,16 +1,24 @@
 package com.marcos.clockclone.ui.screens.map
 
+import android.preference.PreferenceManager
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.*
+import androidx.compose.ui.viewinterop.AndroidView
+import org.osmdroid.config.Configuration
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -20,56 +28,41 @@ fun MapScreen(
     lng: Double,
     onBack: () -> Unit
 ) {
-    // Configuramos la posición inicial de la cámara en la ciudad pulsada
-    val cityLocation = LatLng(lat, lng)
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(cityLocation, 5f)
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Editar ciudad: $cityName", color = Color.White) },
+                title = { Text(cityName) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver", tint = Color.White)
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black)
+                }
             )
         }
-    ) { padding ->
-        // El componente de Google Maps para Compose
-        GoogleMap(
+    ) { paddingValues ->
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
-            cameraPositionState = cameraPositionState,
-            properties = MapProperties(mapType = MapType.NORMAL)
+                .padding(paddingValues)
         ) {
-            // Ponemos el pin (Marker) de la ciudad principal
-            Marker(
-                state = MarkerState(position = cityLocation),
-                title = cityName,
-                snippet = "Hora local"
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
+                factory = { context ->
+                    Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context))
+                    val mapView = MapView(context)
+                    mapView.setTileSource(TileSourceFactory.MAPNIK)
+                    mapView.setMultiTouchControls(true)
+                    mapView.controller.setZoom(12.0)
+                    mapView.controller.setCenter(GeoPoint(lat, lng))
+                    mapView
+                },
+                update = { mapView ->
+                     mapView.controller.animateTo(GeoPoint(lat, lng))
+                }
             )
-
-            // Pines de las otras ciudades importantes que pediste
-            val otherCities = listOf(
-                LatLng(48.8566, 2.3522) to "París",
-                LatLng(55.7558, 37.6173) to "Moscú",
-                LatLng(38.9072, -77.0369) to "Washington",
-                LatLng(45.4215, -75.6972) to "Ottawa",
-                LatLng(41.9028, 12.4964) to "Roma",
-                LatLng(52.5200, 13.4050) to "Berlín"
-            )
-
-            otherCities.forEach { (position, title) ->
-                Marker(
-                    state = MarkerState(position = position),
-                    title = title
-                )
-            }
         }
     }
 }
