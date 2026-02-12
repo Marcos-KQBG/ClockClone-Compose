@@ -20,6 +20,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
@@ -62,6 +63,14 @@ fun MapScreen(
                     val mapView = MapView(context)
                     mapView.setTileSource(TileSourceFactory.MAPNIK)
                     mapView.setMultiTouchControls(true)
+                    mapView.minZoomLevel = 3.0
+                    mapView.setHorizontalMapRepetitionEnabled(false)
+                    mapView.setVerticalMapRepetitionEnabled(false)
+
+                    // Establecemos los límites del mapa para que no se salga de la pantalla
+                    val worldBounds = BoundingBox(85.0511, 180.0, -85.0511, -180.0)
+                    mapView.setScrollableAreaLimitDouble(worldBounds)
+
                     mapView.controller.setZoom(12.0)
                     mapView.controller.setCenter(GeoPoint(lat, lng))
                     mapView
