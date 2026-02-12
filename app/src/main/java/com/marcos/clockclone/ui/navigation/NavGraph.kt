@@ -12,13 +12,15 @@ import com.marcos.clockclone.ui.screens.detail.DetailScreen
 import com.marcos.clockclone.ui.screens.detail.DetailViewModel
 import com.marcos.clockclone.ui.screens.list.ListViewModel
 import com.marcos.clockclone.ui.screens.map.MapScreen
+import com.marcos.clockclone.ui.screens.map.MapViewModel
 import com.marcos.clockclone.ui.screens.splash.SplashScreen
 import com.marcos.clockclone.ui.screens.splash.SplashViewModel
 
 @Composable
 fun NavGraph(
     splashViewModel: SplashViewModel,
-    listViewModel: ListViewModel
+    listViewModel: ListViewModel,
+    mapViewModel: MapViewModel = viewModel()
 ) {
     val navController = rememberNavController()
 
@@ -43,6 +45,7 @@ fun NavGraph(
         composable(route = "main") {
             HomeContainer(
                 listViewModel = listViewModel,
+                mapViewModel = mapViewModel, // Pasamos el MapViewModel
                 navController = navController
             )
         }
@@ -82,6 +85,7 @@ fun NavGraph(
                 cityName = name,
                 lat = lat,
                 lng = lng,
+                mapViewModel = mapViewModel, // Pasamos el MapViewModel
                 onBack = { navController.popBackStack() }
             )
         }

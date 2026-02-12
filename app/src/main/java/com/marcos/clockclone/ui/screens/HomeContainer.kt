@@ -12,11 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.marcos.clockclone.ui.screens.list.MainScreen
 import com.marcos.clockclone.ui.screens.list.ListViewModel
+import com.marcos.clockclone.ui.screens.map.MapViewModel
 import com.marcos.clockclone.ui.screens.map.WorldClockScreen
 
 @Composable
 fun HomeContainer(
     listViewModel: ListViewModel,
+    mapViewModel: MapViewModel, // Añadido el MapViewModel
     navController: androidx.navigation.NavHostController
 ) {
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -50,6 +52,7 @@ fun HomeContainer(
             )
             1 -> WorldClockScreen(
                 navController = navController,
+                mapViewModel = mapViewModel, // Pasamos el MapViewModel
                 modifier = Modifier.padding(padding)
             )
         }
