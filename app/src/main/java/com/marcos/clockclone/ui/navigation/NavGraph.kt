@@ -1,7 +1,6 @@
 package com.marcos.clockclone.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,7 +19,8 @@ import com.marcos.clockclone.ui.screens.splash.SplashViewModel
 fun NavGraph(
     splashViewModel: SplashViewModel,
     listViewModel: ListViewModel,
-    mapViewModel: MapViewModel = viewModel()
+    mapViewModel: MapViewModel,
+    detailViewModel: DetailViewModel // <--- 1. AÑADIMOS EL PARÁMETRO AQUÍ
 ) {
     val navController = rememberNavController()
 
@@ -34,40 +34,39 @@ fun NavGraph(
                 viewModel = splashViewModel,
                 onNavigateToMain = {
                     navController.navigate("main") {
-                        // Evitamos que el usuario pueda volver al Splash al pulsar atrás
                         popUpTo("splash") { inclusive = true }
                     }
                 }
             )
         }
 
-        // 2. Contenedor Principal (Pestañas de Alarmas y Reloj Mundial)
+        // 2. Contenedor Principal
         composable(route = "main") {
             HomeContainer(
                 listViewModel = listViewModel,
-                mapViewModel = mapViewModel, // Pasamos el MapViewModel
+                mapViewModel = mapViewModel,
                 navController = navController
             )
         }
 
-        // 3. Pantalla de Detalle (Edición de una Alarma específica)
+        // 3. Pantalla de Detalle (Edición)
         composable(
             route = "detail/{alarmId}",
             arguments = listOf(navArgument("alarmId") { type = NavType.IntType })
         ) { backStackEntry ->
             val alarmId = backStackEntry.arguments?.getInt("alarmId")
 
-            // Inyectamos el DetailViewModel para manejar la lógica de edición
-            val detailViewModel: DetailViewModel = viewModel()
+            // 2. BORRAMOS la línea "val detailViewModel: DetailViewModel = viewModel()"
+            // Ahora usamos directamente el 'detailViewModel' que viene por parámetro.
 
             DetailScreen(
                 alarmId = alarmId,
-                viewModel = detailViewModel,
+                viewModel = detailViewModel, // <--- 3. USAMOS EL PASADO POR PARÁMETRO
                 onBack = { navController.popBackStack() }
             )
         }
 
-        // 4. Pantalla de Mapa (Detalle de Ciudad del Reloj Mundial)
+        // 4. Pantalla de Mapa
         composable(
             route = "map_detail/{name}/{lat}/{lng}",
             arguments = listOf(
@@ -77,7 +76,6 @@ fun NavGraph(
             )
         ) { backStackEntry ->
             val name = backStackEntry.arguments?.getString("name") ?: ""
-            // Los argumentos de navegación pasan como Float, los convertimos a Double para el mapa
             val lat = backStackEntry.arguments?.getFloat("lat")?.toDouble() ?: 0.0
             val lng = backStackEntry.arguments?.getFloat("lng")?.toDouble() ?: 0.0
 
@@ -85,7 +83,7 @@ fun NavGraph(
                 cityName = name,
                 lat = lat,
                 lng = lng,
-                mapViewModel = mapViewModel, // Pasamos el MapViewModel
+                mapViewModel = mapViewModel,
                 onBack = { navController.popBackStack() }
             )
         }

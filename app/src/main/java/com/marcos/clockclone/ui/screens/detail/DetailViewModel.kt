@@ -1,41 +1,59 @@
 package com.marcos.clockclone.ui.screens.detail
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.marcos.clockclone.data.local.Alarm
+import com.marcos.clockclone.data.local.AlarmDao
 import com.marcos.clockclone.ui.mvi.DetailIntent
 import com.marcos.clockclone.ui.mvi.DetailState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class DetailViewModel : ViewModel() {
+class DetailViewModel(private val alarmDao: AlarmDao) : ViewModel() {
 
-    // El estado privado que solo el ViewModel puede cambiar
     private val _state = MutableStateFlow(DetailState())
-    // El estado público que la pantalla lee
     val state: StateFlow<DetailState> = _state
 
     fun handleIntent(intent: DetailIntent) {
         when (intent) {
             is DetailIntent.LoadAlarm -> {
-                // Aquí simulamos que cargamos la alarma (luego vendrá de la base de datos)
-                _state.value = _state.value.copy(
-                    alarmId = intent.id,
-                    label = "Alarma ${intent.id}"
-                )
+                viewModelScope.launch {
+                    // Cargamos los datos reales de la base de datos
+                    val alarm = alarmDao.getAlarmById(intent.id)
+                    alarm?.let {
+                        _state.value = _state.value.copy(
+                            alarmId = it.id,
+                            label = it.label,
+                            time = it.time,
+                            date = it.date
+                        )
+                    }
+                }
             }
             is DetailIntent.UpdateName -> {
-                // Actualizamos el nombre en la "foto" del estado
                 _state.value = _state.value.copy(label = intent.newName)
             }
             is DetailIntent.UpdateDate -> {
-                // Actualizamos la fecha
                 _state.value = _state.value.copy(date = intent.newDate)
             }
             is DetailIntent.UpdateTime -> {
                 _state.value = _state.value.copy(time = intent.newTime)
             }
             is DetailIntent.SaveAlarm -> {
-                // Por ahora solo imprimimos, aquí irá el guardado real
-                println("Guardando cambios de alarma: ${_state.value.label}")
+                viewModelScope.launch {
+                    val current = _state.value
+                    // Guardamos (Insert o Update) en la base de datos
+                    alarmDao.insertAlarm(
+                        Alarm(
+                            id = current.alarmId ?: 0,
+                            time = current.time,
+                            label = current.label,
+                            date = current.date,
+                            isActive = true
+                        )
+                    )
+                }
             }
         }
     }
