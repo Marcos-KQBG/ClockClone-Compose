@@ -28,7 +28,7 @@ fun NavGraph(
         navController = navController,
         startDestination = "splash"
     ) {
-        // 1. Pantalla de carga (Splash)
+        //Pantalla de carga
         composable(route = "splash") {
             SplashScreen(
                 viewModel = splashViewModel,
@@ -40,7 +40,6 @@ fun NavGraph(
             )
         }
 
-        // 2. Contenedor Principal
         composable(route = "main") {
             HomeContainer(
                 listViewModel = listViewModel,
@@ -49,24 +48,21 @@ fun NavGraph(
             )
         }
 
-        // 3. Pantalla de Detalle (Edición)
+        // Pantalla de Detalle (Edición)
         composable(
             route = "detail/{alarmId}",
             arguments = listOf(navArgument("alarmId") { type = NavType.IntType })
         ) { backStackEntry ->
             val alarmId = backStackEntry.arguments?.getInt("alarmId")
 
-            // 2. BORRAMOS la línea "val detailViewModel: DetailViewModel = viewModel()"
-            // Ahora usamos directamente el 'detailViewModel' que viene por parámetro.
-
             DetailScreen(
                 alarmId = alarmId,
-                viewModel = detailViewModel, // <--- 3. USAMOS EL PASADO POR PARÁMETRO
+                viewModel = detailViewModel,
                 onBack = { navController.popBackStack() }
             )
         }
 
-        // 4. Pantalla de Mapa
+        //Pantalla de Mapa
         composable(
             route = "map_detail/{name}/{lat}/{lng}",
             arguments = listOf(

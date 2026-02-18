@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Timer
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -15,6 +16,7 @@ import com.marcos.clockclone.ui.screens.list.MainScreen
 import com.marcos.clockclone.ui.screens.list.ListViewModel
 import com.marcos.clockclone.ui.screens.map.MapViewModel
 import com.marcos.clockclone.ui.screens.map.WorldClockScreen
+import com.marcos.clockclone.ui.screens.timer.TimerWebScreen
 
 @Composable
 fun HomeContainer(
@@ -39,6 +41,12 @@ fun HomeContainer(
                     label = { Text("Reloj mundial", color = Color.White) },
                     icon = { Icon(Icons.Default.Place, "Reloj mundial", tint = Color.White) }
                 )
+                NavigationBarItem(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    label = { Text("Cronometro", color = Color.White) },
+                    icon = { Icon(Icons.Default.Timer, "Cronometro", tint = Color.White) }
+                )
             }
         },
         containerColor = Color.Black
@@ -56,6 +64,7 @@ fun HomeContainer(
                 mapViewModel = mapViewModel, // Pasamos el MapViewModel
                 modifier = Modifier.padding(padding)
             )
+            2 -> TimerWebScreen()
         }
     }
 }

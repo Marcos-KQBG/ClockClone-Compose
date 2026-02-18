@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class ListViewModel(private val alarmDao: AlarmDao) : ViewModel() {
 
-    // 1. La fuente de verdad es Room.
+    // La fuente de verdad es Room
     // Cada vez que la DB cambie, la UI se actualizará automáticamente.
     val state: StateFlow<ListState> = alarmDao.getAllAlarms()
         .map { ListState(alarms = it) }

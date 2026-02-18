@@ -74,7 +74,7 @@ fun SplashScreen(viewModel: SplashViewModel, onNavigateToMain: () -> Unit) {
             )
         }
 
-        // Un detalle extra: un texto al pie de página
+        // texto al pie de página
         Text(
             text = "By Marcos, Jorge y Héctor",
             color = Color.DarkGray,

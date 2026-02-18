@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation("org.osmdroid:osmdroid-android:6.1.16")
     implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.compose.material:material-icons-extended")
     // Navigation Compose
     implementation(libs.androidx.navigation.compose)
 

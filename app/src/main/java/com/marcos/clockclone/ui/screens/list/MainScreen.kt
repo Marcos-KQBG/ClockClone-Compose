@@ -120,7 +120,7 @@ fun AlarmItem(
                 )
             }
 
-            // Fila de acciones: Borrar e Interruptor
+            //  Borrar e Interruptor
             Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onDelete) {
                     Icon(
