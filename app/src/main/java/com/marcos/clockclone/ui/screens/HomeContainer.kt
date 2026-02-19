@@ -5,21 +5,26 @@ import androidx.compose.material.icons.Icons
 
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Timer
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.marcos.clockclone.ui.screens.list.MainScreen
 import com.marcos.clockclone.ui.screens.list.ListViewModel
+import com.marcos.clockclone.ui.screens.map.MapViewModel
 import com.marcos.clockclone.ui.screens.map.WorldClockScreen
+import com.marcos.clockclone.ui.screens.timer.TimerWebScreen
 
 @Composable
 fun HomeContainer(
     listViewModel: ListViewModel,
+    mapViewModel: MapViewModel, // Añadido el MapViewModel
     navController: androidx.navigation.NavHostController
 ) {
-    var selectedTab by remember { mutableIntStateOf(0) }
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) } // <--- CAMBIO AQUÍ
 
     Scaffold(
         bottomBar = {
@@ -36,6 +41,12 @@ fun HomeContainer(
                     label = { Text("Reloj mundial", color = Color.White) },
                     icon = { Icon(Icons.Default.Place, "Reloj mundial", tint = Color.White) }
                 )
+                NavigationBarItem(
+                    selected = selectedTab == 2,
+                    onClick = { selectedTab = 2 },
+                    label = { Text("Cronometro", color = Color.White) },
+                    icon = { Icon(Icons.Default.Timer, "Cronometro", tint = Color.White) }
+                )
             }
         },
         containerColor = Color.Black
@@ -50,8 +61,10 @@ fun HomeContainer(
             )
             1 -> WorldClockScreen(
                 navController = navController,
+                mapViewModel = mapViewModel, // Pasamos el MapViewModel
                 modifier = Modifier.padding(padding)
             )
+            2 -> TimerWebScreen()
         }
     }
 }

@@ -13,7 +13,7 @@ data class DetailState(
 sealed class DetailIntent {
     data class LoadAlarm(val id: Int) : DetailIntent()
     data class UpdateName(val newName: String) : DetailIntent()
-    data class UpdateTime(val newTime: String) : DetailIntent()
     data class UpdateDate(val newDate: String) : DetailIntent()
+    data class UpdateTime(val newTime: String) : DetailIntent()
     object SaveAlarm : DetailIntent()
 }

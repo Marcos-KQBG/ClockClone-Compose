@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,18 +28,15 @@ fun MainScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    // Accedemos al estado completo del ViewModel (MVI)
     val state by viewModel.state.collectAsState()
     val alarms = state.alarms
 
-    // Cargamos las alarmas iniciales si la lista está vacía
     LaunchedEffect(Unit) {
         if (alarms.isEmpty()) {
             viewModel.handleIntent(ListIntent.LoadAlarms)
         }
     }
 
-    // Usamos Box para superponer el FloatingActionButton sobre la lista
     Box(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -61,21 +59,22 @@ fun MainScreen(
                     AlarmItem(
                         alarm = alarm,
                         onClick = {
-                            // Navegación a la ruta de detalle con ID
                             navController.navigate("detail/${alarm.id}")
                         },
                         onToggle = {
                             viewModel.handleIntent(ListIntent.ToggleAlarm(alarm.id))
+                        },
+                        onDelete = {
+                            // Acción de borrado vinculada al Intent
+                            viewModel.handleIntent(ListIntent.DeleteAlarm(alarm.id))
                         }
                     )
                 }
             }
         }
 
-        // El Botón Flotante (FAB) posicionado abajo a la derecha
         FloatingActionButton(
             onClick = {
-                // Llamamos a la intención de añadir nueva alarma
                 viewModel.handleIntent(ListIntent.AddAlarm)
             },
             containerColor = Color.Cyan,
@@ -93,7 +92,8 @@ fun MainScreen(
 fun AlarmItem(
     alarm: Alarm,
     onClick: () -> Unit,
-    onToggle: () -> Unit
+    onToggle: () -> Unit,
+    onDelete: () -> Unit // Nuevo parámetro para el borrado
 ) {
     Card(
         modifier = Modifier
@@ -108,7 +108,7 @@ fun AlarmItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = alarm.time,
                     fontSize = 40.sp,
@@ -119,10 +119,21 @@ fun AlarmItem(
                     color = if (alarm.isActive) Color.White else Color.Gray
                 )
             }
-            Switch(
-                checked = alarm.isActive,
-                onCheckedChange = { onToggle() }
-            )
+
+            //  Borrar e Interruptor
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Borrar Alarma",
+                        tint = Color.Red.copy(alpha = 0.8f)
+                    )
+                }
+                Switch(
+                    checked = alarm.isActive,
+                    onCheckedChange = { onToggle() }
+                )
+            }
         }
     }
 }

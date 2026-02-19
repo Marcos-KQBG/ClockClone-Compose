@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
+
 }
 
 android {
@@ -48,8 +50,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation("com.google.maps.android:maps-compose:2.11.4")
-    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("org.osmdroid:osmdroid-android:6.1.16")
+    implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("androidx.compose.material:material-icons-extended")
     // Navigation Compose
     implementation(libs.androidx.navigation.compose)
 
@@ -60,4 +63,8 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
 }

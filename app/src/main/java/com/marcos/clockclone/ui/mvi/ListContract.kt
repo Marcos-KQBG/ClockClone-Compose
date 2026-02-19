@@ -10,5 +10,7 @@ data class ListState(
 sealed class ListIntent {
     object LoadAlarms : ListIntent()
     data class ToggleAlarm(val alarmId: Int) : ListIntent()
+    data class DeleteAlarm(val id: Int) : ListIntent()
     object AddAlarm : ListIntent()
+
 }

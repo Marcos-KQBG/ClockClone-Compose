@@ -7,5 +7,6 @@ data class WorldCity(
     val time: String,      // Ejemplo: "15:50"
     val temp: String,      // Ejemplo: "8°" (opcional, para el icono del tiempo)
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val timeZoneId: String
 )
